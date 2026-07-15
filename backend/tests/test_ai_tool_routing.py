@@ -18,6 +18,9 @@ class AIChatRoutingTests(unittest.TestCase):
     def test_parse_transaction_returns_dict(self):
         parsed = self.agent.parse_transaction('Log transaction: HCP John Doe, Meeting, topics: Product X, attendees: Rep, outcomes: Positive response')
         self.assertIsInstance(parsed, dict)
+        self.assertTrue(parsed.get('hcp_name'))
+        self.assertTrue(parsed.get('topics'))
+        self.assertEqual(parsed.get('sentiment'), 'Positive')
 
 
 if __name__ == '__main__':
