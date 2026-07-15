@@ -10,11 +10,6 @@ function AIChatPanel({ messages, onSend, activeInteraction }) {
     setMessage('')
   }
 
-  const isLogIntent = () => {
-    const t = message.trim().toLowerCase()
-    return /\b(log|transaction|record|save)\b/.test(t)
-  }
-
   return (
     <div className="card panel-chat">
       <div className="card-header">
@@ -22,7 +17,7 @@ function AIChatPanel({ messages, onSend, activeInteraction }) {
         <p>Use the chatbot to log the transaction, summarize details, classify sentiment, or plan follow ups.</p>
       </div>
       <div className="chat-window">
-        {messages.length === 0 && <p className="empty-chat">Describe interaction or ask the assistant for a summary.</p>}
+        {messages.length === 0 && <p className="empty-chat">Describe interaction or ask the assistant for a transaction.</p>}
         {messages.map((item, index) => (
           <div key={index} className={`chat-bubble ${item.sender}`}>
             <strong>{item.sender === 'assistant' ? 'Assistant' : 'You'}</strong>
@@ -35,9 +30,9 @@ function AIChatPanel({ messages, onSend, activeInteraction }) {
         <input
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder={activeInteraction ? 'Log the transaction or ask about this interaction...' : 'Log the transaction or ask for a summary...'}
+          placeholder="Describe the transaction and click Log Transaction..."
         />
-        <button className="primary" type="submit">{isLogIntent() ? 'Log Transaction' : 'Send'}</button>
+        <button className="primary" type="submit">Log Transaction</button>
       </form>
     </div>
   )

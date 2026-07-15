@@ -65,6 +65,7 @@ class HCPInteraction(BaseModel):
 class AIRequest(BaseModel):
     prompt: str
     interaction_id: Optional[int] = None
+    force_log: Optional[bool] = False
 
 class AIResponse(BaseModel):
     text: str

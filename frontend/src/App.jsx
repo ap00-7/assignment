@@ -41,12 +41,11 @@ function App() {
   const handleAssistantSend = async (message, interactionId) => {
     dispatch(addChatMessage({ sender: 'user', text: message }))
     try {
-      const res = await dispatch(aiChat({ prompt: message, interaction_id: interactionId })).unwrap()
+      const res = await dispatch(aiChat({ prompt: message, interaction_id: interactionId, force_log: true })).unwrap()
       if (res?.interaction) {
         setActiveInteraction(res.interaction)
       }
     } catch (err) {
-      // ignore for now; the slice already pushes assistant messages on success
       console.error('AI chat error', err)
     }
   }

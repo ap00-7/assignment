@@ -84,7 +84,7 @@ def ai_chat(request: schemas.AIRequest, db=Depends(get_db)):
     prompt = request.prompt
     if interaction:
         prompt = f"Interaction context: {interaction.get('topics') or ''}. {prompt}"
-    tool = agent.route_tool(prompt)
+    tool = 'Log Interaction' if request.force_log else agent.route_tool(prompt)
     created_interaction = None
     if tool == 'Summarize Interaction':
         text = agent.summarize_interaction(interaction if interaction else {'topics': prompt})
