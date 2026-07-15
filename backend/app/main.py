@@ -85,6 +85,7 @@ def ai_chat(request: schemas.AIRequest, db=Depends(get_db)):
     if interaction:
         prompt = f"Interaction context: {interaction.get('topics') or ''}. {prompt}"
     tool = agent.route_tool(prompt)
+    created_interaction = None
     if tool == 'Summarize Interaction':
         text = agent.summarize_interaction(interaction if interaction else {'topics': prompt})
     elif tool == 'Follow-up Planner':
@@ -92,8 +93,31 @@ def ai_chat(request: schemas.AIRequest, db=Depends(get_db)):
     elif tool == 'Sentiment Classifier':
         text = agent.classify_sentiment(prompt)
     elif tool == 'Log Interaction':
-        text = agent.help_describe(prompt)
+        # Parse structured fields and create an interaction record
+        parsed = agent.parse_transaction(prompt)
+        create_payload = {
+            'hcp_name': parsed.get('hcp_name') or '',
+            'interaction_type': parsed.get('interaction_type') or 'Meeting',
+            'date': parsed.get('date') or '',
+            'time': parsed.get('time') or '',
+            'attendees': parsed.get('attendees'),
+            'topics': parsed.get('topics'),
+            'sentiment': parsed.get('sentiment'),
+            'outcomes': parsed.get('outcomes'),
+            'follow_up': parsed.get('follow_up'),
+            'notes': parsed.get('notes'),
+            'materials': parsed.get('materials') or [],
+            'samples': parsed.get('samples') or [],
+        }
+        created_interaction = crud.create_interaction(db, schemas.HCPInteractionCreate(**create_payload))
+        # generate summary and attach
+        summary = agent.summarize_interaction(created_interaction)
+        cursor = db.cursor()
+        cursor.execute('UPDATE hcp_interactions SET ai_summary = ? WHERE id = ?', (summary, created_interaction['id']))
+        db.commit()
+        created_interaction['ai_summary'] = summary
+        text = summary
     else:
         text = agent.help_describe(prompt)
-    
-    return schemas.AIResponse(text=text, tool=tool)
+
+    return schemas.AIResponse(text=text, tool=tool, interaction=created_interaction)

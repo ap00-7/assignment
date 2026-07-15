@@ -15,6 +15,10 @@ class AIChatRoutingTests(unittest.TestCase):
         tool = self.agent.route_tool('Please summarize this interaction')
         self.assertEqual(tool, 'Summarize Interaction')
 
+    def test_parse_transaction_returns_dict(self):
+        parsed = self.agent.parse_transaction('Log transaction: HCP John Doe, Meeting, topics: Product X, attendees: Rep, outcomes: Positive response')
+        self.assertIsInstance(parsed, dict)
+
 
 if __name__ == '__main__':
     unittest.main()

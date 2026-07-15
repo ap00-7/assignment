@@ -2,6 +2,7 @@ import os
 import requests
 from typing import Dict, Any
 from .config import GROQ_API_KEY, GROQ_MODEL
+import json
 
 GROQ_ENDPOINT = 'https://api.groq.com/v1/generate'
 
@@ -61,6 +62,26 @@ class LangGraphAgent:
     def help_describe(self, description: str) -> str:
         prompt = f"Provide a clear assistant blurb for the following interaction description: {description}"
         return self._call_groq(prompt)
+
+    def parse_transaction(self, prompt: str) -> Dict[str, Any]:
+        """Ask the model to return a JSON object matching the HCP interaction schema.
+
+        Falls back to a minimal parse when the model is not available or JSON parse fails.
+        """
+        instruct = (
+            "Return a JSON object with keys: hcp_name, interaction_type, date, time, attendees, "
+            "topics, sentiment, outcomes, follow_up, notes, materials (list of {name}), samples (list of {name,quantity}). "
+            f"Use the following content to extract fields: {prompt}"
+        )
+        response = self._call_groq(instruct)
+        try:
+            parsed = json.loads(response)
+            return parsed if isinstance(parsed, dict) else {"notes": response}
+        except Exception:
+            # Fallback: attempt simple extraction heuristics
+            lower = prompt.lower()
+            parsed = {"hcp_name": "", "interaction_type": "", "date": "", "time": "", "attendees": "", "topics": "", "sentiment": "", "outcomes": "", "follow_up": "", "notes": prompt, "materials": [], "samples": []}
+            return parsed
 
     def route_tool(self, prompt: str) -> str:
         lowered = prompt.lower()

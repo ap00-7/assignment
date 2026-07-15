@@ -69,3 +69,4 @@ class AIRequest(BaseModel):
 class AIResponse(BaseModel):
     text: str
     tool: str
+    interaction: Optional[HCPInteraction] = None

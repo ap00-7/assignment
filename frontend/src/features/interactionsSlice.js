@@ -61,6 +61,9 @@ const interactionsSlice = createSlice({
       })
       .addCase(aiChat.fulfilled, (state, action) => {
         state.chat.messages.push({ sender: 'assistant', text: action.payload.text, tool: action.payload.tool })
+        if (action.payload.interaction) {
+          state.list.unshift(action.payload.interaction)
+        }
       })
   },
 })
