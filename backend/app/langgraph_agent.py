@@ -108,19 +108,30 @@ class LangGraphAgent:
         }
 
     def _extract_hcp_name(self, prompt: str) -> str:
-        patterns = [
-            r'HCP\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)',
-            r'Dr\.\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)',
-            r'Dr\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)',
-            r'Mr\.\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)',
-            r'Ms\.\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)',
-            r'Mrs\.\s*([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)',
-            r'with\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)',
-        ]
-        for pattern in patterns:
-            match = re.search(pattern, prompt)
-            if match:
-                return match.group(1).strip()
+        # Try title-prefixed names first (Dr. Smith, Mr. Jones, etc.)
+        title_pattern = r'(?:Dr\.|Dr|Mr\.|Mr|Ms\.|Ms|Mrs\.|Mrs)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)'
+        match = re.search(title_pattern, prompt)
+        if match:
+            name = match.group(1).strip()
+            if name:
+                return name
+        
+        # Then try HCP prefix
+        hcp_pattern = r'HCP\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)'
+        match = re.search(hcp_pattern, prompt)
+        if match:
+            name = match.group(1).strip()
+            if name and ' ' in name:  # Prefer multi-word names
+                return name
+        
+        # Finally try "with" prefix
+        with_pattern = r'with\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)'
+        match = re.search(with_pattern, prompt)
+        if match:
+            name = match.group(1).strip()
+            if name:
+                return name
+        
         return ''
 
     def _extract_topics(self, prompt: str) -> str:

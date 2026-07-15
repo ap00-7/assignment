@@ -22,9 +22,7 @@ function InteractionForm({ onSubmit, interaction, onCancel }) {
   const [sampleQuantity, setSampleQuantity] = useState('')
 
   useEffect(() => {
-    console.log('[DEBUG] InteractionForm: interaction prop changed:', interaction)
     if (interaction) {
-      console.log('[DEBUG] Populating form with interaction:', interaction)
       setForm({
         ...initialForm,
         ...interaction,
@@ -32,7 +30,6 @@ function InteractionForm({ onSubmit, interaction, onCancel }) {
         samples: interaction.samples || [],
       })
     } else {
-      console.log('[DEBUG] Clearing form (no interaction)')
       setForm(initialForm)
     }
   }, [interaction])

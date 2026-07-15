@@ -41,17 +41,12 @@ function App() {
   const handleAssistantSend = async (message, interactionId) => {
     dispatch(addChatMessage({ sender: 'user', text: message }))
     try {
-      console.log('[DEBUG] Sending AI chat request:', { message, interactionId })
       const res = await dispatch(aiChat({ prompt: message, interaction_id: interactionId, force_log: true })).unwrap()
-      console.log('[DEBUG] AI chat response:', res)
       if (res?.interaction) {
-        console.log('[DEBUG] Setting active interaction:', res.interaction)
         setActiveInteraction(res.interaction)
-      } else {
-        console.log('[DEBUG] No interaction in response')
       }
     } catch (err) {
-      console.error('[DEBUG] AI chat error', err)
+      console.error('AI chat error', err)
     }
   }
 
