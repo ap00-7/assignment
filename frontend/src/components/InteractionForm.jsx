@@ -156,8 +156,8 @@ function InteractionForm({ onSubmit, interaction, onCancel }) {
           <textarea value={form.follow_up} onChange={handleChange('follow_up')} rows={3} placeholder="Enter next steps or tasks..." />
         </label>
         <label className="full-width">
-          Notes
-          <textarea value={form.notes} onChange={handleChange('notes')} rows={3} placeholder="Additional notes for the interaction..." />
+          Additional Notes
+          <textarea value={form.notes} onChange={handleChange('notes')} rows={3} placeholder="Optional supporting details only; use the AI chatbot to log the transaction." />
         </label>
 
         <div className="actions full-width">

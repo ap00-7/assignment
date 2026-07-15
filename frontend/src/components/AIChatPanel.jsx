@@ -14,7 +14,7 @@ function AIChatPanel({ messages, onSend, activeInteraction }) {
     <div className="card panel-chat">
       <div className="card-header">
         <h2>AI Assistant</h2>
-        <p>Ask the LangGraph agent to summarize, classify sentiment, or plan follow ups.</p>
+        <p>Use the chatbot to log the transaction, summarize details, classify sentiment, or plan follow ups.</p>
       </div>
       <div className="chat-window">
         {messages.length === 0 && <p className="empty-chat">Describe interaction or ask the assistant for a summary.</p>}
@@ -30,7 +30,7 @@ function AIChatPanel({ messages, onSend, activeInteraction }) {
         <input
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder={activeInteraction ? 'Ask about this interaction...' : 'Ask to summarize or classify sentiment...'}
+          placeholder={activeInteraction ? 'Log the transaction or ask about this interaction...' : 'Log the transaction or ask for a summary...'}
         />
         <button className="primary" type="submit">Send</button>
       </form>

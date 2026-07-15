@@ -62,6 +62,18 @@ class LangGraphAgent:
         prompt = f"Provide a clear assistant blurb for the following interaction description: {description}"
         return self._call_groq(prompt)
 
+    def route_tool(self, prompt: str) -> str:
+        lowered = prompt.lower()
+        if any(keyword in lowered for keyword in ['log', 'transaction', 'record']):
+            return 'Log Interaction'
+        if 'follow-up' in lowered or 'follow up' in lowered or 'next step' in lowered:
+            return 'Follow-up Planner'
+        if 'sentiment' in lowered:
+            return 'Sentiment Classifier'
+        if 'summarize' in lowered:
+            return 'Summarize Interaction'
+        return 'AI Assistant'
+
     def tool_list(self) -> Dict[str, str]:
         return {
             'Log Interaction': 'Capture structured HCP interaction details and store them securely.',

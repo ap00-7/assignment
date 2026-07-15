@@ -84,16 +84,16 @@ def ai_chat(request: schemas.AIRequest, db=Depends(get_db)):
     prompt = request.prompt
     if interaction:
         prompt = f"Interaction context: {interaction.get('topics') or ''}. {prompt}"
-    if 'summarize' in request.prompt.lower():
-        text = agent.summarize_interaction(interaction if interaction else {'topics': request.prompt})
-        tool = 'Summarize Interaction'
-    elif 'follow-up' in request.prompt.lower() or 'follow up' in request.prompt.lower():
-        text = agent.extract_action_items(request.prompt)
-        tool = 'Follow-up Planner'
-    elif 'sentiment' in request.prompt.lower():
-        text = agent.classify_sentiment(request.prompt)
-        tool = 'Sentiment Classifier'
+    tool = agent.route_tool(prompt)
+    if tool == 'Summarize Interaction':
+        text = agent.summarize_interaction(interaction if interaction else {'topics': prompt})
+    elif tool == 'Follow-up Planner':
+        text = agent.extract_action_items(prompt)
+    elif tool == 'Sentiment Classifier':
+        text = agent.classify_sentiment(prompt)
+    elif tool == 'Log Interaction':
+        text = agent.help_describe(prompt)
     else:
-        text = agent.help_describe(request.prompt)
-        tool = 'AI Assistant'
+        text = agent.help_describe(prompt)
+    
     return schemas.AIResponse(text=text, tool=tool)
