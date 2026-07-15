@@ -10,6 +10,11 @@ function AIChatPanel({ messages, onSend, activeInteraction }) {
     setMessage('')
   }
 
+  const isLogIntent = () => {
+    const t = message.trim().toLowerCase()
+    return /\b(log|transaction|record|save)\b/.test(t)
+  }
+
   return (
     <div className="card panel-chat">
       <div className="card-header">
@@ -32,7 +37,7 @@ function AIChatPanel({ messages, onSend, activeInteraction }) {
           onChange={(e) => setMessage(e.target.value)}
           placeholder={activeInteraction ? 'Log the transaction or ask about this interaction...' : 'Log the transaction or ask for a summary...'}
         />
-        <button className="primary" type="submit">Send</button>
+        <button className="primary" type="submit">{isLogIntent() ? 'Log Transaction' : 'Send'}</button>
       </form>
     </div>
   )
